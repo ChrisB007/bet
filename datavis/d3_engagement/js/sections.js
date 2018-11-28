@@ -13,7 +13,7 @@ var scrollVis = function () {
     var margin = { top: 0, left: 100, bottom: 500, right: 0 };
 
 
-    var bar_fav_width = 12;
+    var bar_fav_width = 20;
     // Keep track of which visualization
     // we are on and which was the last
     // index activated. When user scrolls
@@ -1282,7 +1282,7 @@ var scrollVis = function () {
 function display(data) {
     // create a new plot and
     // display it
-    console.log(data);
+    //console.log(data);
     var plot = scrollVis();
     d3.select('#vis')
 	.datum(data)
