@@ -35,11 +35,6 @@ var scrollVis = function () {
     // We will set the domain when the
     // data is processed.
     // @v4 using new scale names
-    var xBarScale = d3.scaleLinear()
-	.range([0, width]);
-    
-    
-    
     
     var yChart_fav_show = d3.scaleLinear()
 	.range([height, 0]);
@@ -70,14 +65,16 @@ var scrollVis = function () {
 	.rangeRound([0, width])
 	.padding(0.5);      
     
+
     var xChart_new_show_l2 = d3.scaleBand();
+    var xChart_fav_show_l2 = d3.scaleBand();
     
     var xChart_fav_show = d3.scaleBand()
 	//.domain(fav_show_data.map(function(entry){
 	//    return entry.attribute;
 	//}))
-	.rangeRound([0, height])
-	.padding(0.1);      
+	.rangeRound([0, width])
+	.padding(0.5);      
 
     
     // When scrolling to a new section
@@ -148,6 +145,7 @@ var scrollVis = function () {
 	    valueNames = ['all', 'bet_fan', 'non_bet_fan']
 
 	    var xChart_new_show_l2 = d3.scaleBand();
+	    var xChart_fav_show_l2 = d3.scaleBand();
 	    
 	    //xChart_new_show_l2.domain(d3.range(valueNames))
 	    //    .range([0, xChart_new_show.bandwidth() - 10]);//domain(valueNames).bandwidth([xChart_new_show.bandwidth()*5 - xChart_new_show.bandwidth()*5*0.5, xChart_new_show.bandwidth()*5 + xChart_new_show.bandwidth()*5*0.25]);    
@@ -187,6 +185,7 @@ var scrollVis = function () {
 	
 	var categories  = ['all', 'bet_fan', 'non_bet_fan'];
 	xChart_new_show_l2.domain(categories).bandwidth(2);
+	xChart_fav_show_l2.domain(categories).bandwidth(2);
 	
 	xAxis_new_show.scale(xChart_new_show);
 	
@@ -219,25 +218,7 @@ var scrollVis = function () {
 	var maxCountNewShow = d3.max(new_show_data, function(d){ return + d.count; });
 	var maxCountFavShow = d3.max(fav_show_data, function(d){ return + d.count; });
 	    
-	console.log(xChart_new_show_l2(10));
-
-
-//	var bars_new_show = g.selectAll(".bar_new_show")
-//	    .data(new_show_data)
-//	    .enter().append("g")
-//	    .style("fill", function(d, i) { return '#000000';})//z(i); })
-//	    //.attr("transform", function(d, i) { console.log(i, xChart_new_show_l2(d.who));  return "translate(" + xChart_new_show_l2(d.who) + ",0)"; })
-//	    .selectAll("rect")
-//	    .data(function(d) { return d; })
-//	    .enter().append("rect")
-//	    .attr("width", xChart_new_show.bandwidth())
-//	    .attr("height", function(d, i) {yChart_new_show(d.value);})
-//	    .attr("x", function(d, i) { return xChart_new_show(d.attribute);})// + xChart_new_show(d.who); })
-//	    .attr("y", function(d) { return height - yChart_new_show(d.value); });
-
-
-
-
+	var width=20;
 	
 	var bars_new_show = g.selectAll(".bar_new_show")
 	    .data(new_show_data);//, function(d){ return d.attribute; })
@@ -257,106 +238,68 @@ var scrollVis = function () {
 		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
 		}
 	    })
-	    .attr("width", 10)//xChart_new_show_l2.bandwidth()*10)
+	    .attr("width", width/2)//xChart_new_show_l2.bandwidth()*10)
 	    .attr('fill', function(d, i){
 		if(d.who ==='all'){
 		    return'#000000';
 		}else if(d.who === 'bet_fan'){
-		    return'#DECADE';
+		    return'#000000';
 		}else{
-		    return '#DAD';
+		    return '#000000';
 		}
 	    })
-	    //.style("fill-opacity", function(d) { return d.count/maxCountNewShow;})
-	    //.attr("height", function(d, i) {
-	    //	return 0;
-	    //})
-	    //.transition()
-	    //.duration(400)
-	    //.delay(function (d, i) {
-	    //	return i * 20;
-	    //})
+	    .attr('stroke', 'black')
 	    .attr("y", function (d, i) {
 		if(d.who === 'all'){
 		    return yChart_new_show(+d.value);
 		}
-		else if(d.who === 'bet_fan'){
-		    console.log(d, i, new_show_data);
+		else{// if(d.who === 'bet_fan'){
+		    //console.log(d, i, new_show_data);
 		    all_row = new_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
-		    return yChart_new_show(all_row['value']);//new_show_data[i][index]['value']);
+		    return yChart_new_show(all_row[0].value);//all_row['value']);//new_show_data[i][index]['value']);
 		}
-		else{
-		    return yChart_new_show(1);
-		}
+		//else{
+		//    return yChart_new_show(0);
+		//}
 	    })
 	    .attr("height", function (d, i) {
 		if(d.who === 'all'){
 		    return height - yChart_new_show(+d.value);
 		}
-		else if(d.who === 'bet_fan'){
-		    console.log(d, i, new_show_data);
+		else{// if (d.who === 'bet_fan'){
 		    all_row = new_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
-		    return height - yChart_new_show(all_row['value']);//new_show_data[i][index]['value']);
+		    //console.log(d, i, all_row, all_row[0]['value']);
+		    return height - yChart_new_show(all_row[0].value);//all_row['value']);//new_show_data[i][index]['value']);
 		}
-		else{
-		    return yChart_new_show(0);
-		}
+		//else{
+		//    return height - yChart_new_show(0);
+		//}
 	    })
 	    .attr('opacity', function(d, i){
 		if (d.who === 'all'){
-		    return 1;
+		    return 0;
 		}else{
 		    return 1;
 		}
-	    })
-	    //.transition(1000)
-	    //.delay(1000)
-	    .attr('opacity', function(d, i){
-	    	if (d.who === 'all'){
-	    	    return 1;
-	    	}else{
-	    	    return 1;
-	    	}
-	    })
-	    .transition()
-	    .delay(2000)
-	    .duration(1000)
-	    .attr('width', 10)
-	    .attr("x", function(d) {
-	    	//if(d.who != 'all'){
-	    	    return  xChart_new_show(d.attribute) + (xChart_new_show_l2(d.who) - xChart_new_show_l2('bet_fan'))*xChart_new_show.bandwidth()*1.5;
-	    	//}
-	    })
-	    .attr("y", function (d, i) {
-	    	//if(d.who != 'all'){
-	    	    return yChart_new_show(+d.value);
-	    	//}
-	    })
-	    .attr("height", function (d, i) {
-	    	//if(d.who != 'all'){
-	    	    return height - yChart_new_show(+d.value);
-	    	//}
 	    });
-
-
 	
 	//g.select('.y').call(yAxis_new_show);
 	//
 	//g.select('.x.axis')
 	//    .attr("transform", "translate(0," + height/2 + ")")
 	//    .call(xAxis_new_show);
-	    //.selectAll("text")
-	    //.style("text-anchor", "end")
-	    //.attr("dx", "-.8em")
-	    //.attr("dy", ".0em")
-	    //.attr("transform", function(d){
-	    //	return "rotate(-90)";
-	    //});
+	//.selectAll("text")
+	//.style("text-anchor", "end")
+	//.attr("dx", "-.8em")
+	//.attr("dy", ".0em")
+	//.attr("transform", function(d){
+	//	return "rotate(-90)";
+	//});
 	
-
-
+	
+	
 	xChart_fav_show.domain(fav_show_data.map(function(entry){
-		return entry.attribute;
+	    return entry.attribute;
 	}));
 
 	
@@ -369,41 +312,103 @@ var scrollVis = function () {
 	
 
 	var bars_fav_show = g.selectAll(".bar_fav_show")
-	    .data(fav_show_data, function(d){ return d.attribute; })
+	    .data(fav_show_data);//, function(d){ return d.attribute; })
 	bars_fav_show.exit()
 	    .remove()
 	bars_fav_show.enter()
 	    .append("rect")
 	    .attr("class", "bar_fav_show")
-	    .attr("x", function(d) { return xChart_fav_show(d.attribute) +0.01*xChart_fav_show(d.attribute);})
-	    .attr("width", 10)
-	    .attr('fill', function(d, i){
-		if(d.value > 1.0){
-		    console.log('hi');
-		    return'#000000';
-		}else{
-		    return'#000000';
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('bet_fan')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
 		}
 	    })
-	    .style("fill-opacity", function(d) { return d.count/maxCountFavShow;})
-	    //.attr("height", function(d, i) {
-	    //	return 0;
-	    //})
-	    //.transition()
-	    //.duration(400)
-	    //.delay(function (d, i) {
-	    //	return i * 20;
-	    //})
+	    .attr("width", width/2)//xChart_fav_show_l2.bandwidth()*10)
+	    .attr('fill', function(d, i){
+		if(d.who ==='all'){
+		    return'#000000';
+		}else if(d.who === 'bet_fan'){
+		    return'#000000';
+		}else{
+		    return '#000000';
+		}
+	    })
+	    .attr('stroke', 'black')
 	    .attr("y", function (d, i) {
-		return yChart_fav_show(d.value) ;
+		if(d.who === 'all'){
+		    return yChart_fav_show(+d.value);
+		}
+		else{// if(d.who === 'bet_fan'){
+		    //console.log(d, i, fav_show_data);
+		    all_row = fav_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
+		    return yChart_fav_show(all_row[0].value);//all_row['value']);//fav_show_data[i][index]['value']);
+		}
+		//else{
+		//    return yChart_fav_show(0);
+		//}
 	    })
 	    .attr("height", function (d, i) {
-		return height - yChart_fav_show(d.value) ;
+		if(d.who === 'all'){
+		    return height - yChart_fav_show(+d.value);
+		}
+		else{// if (d.who === 'bet_fan'){
+		    all_row = fav_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
+		    //console.log(d, i, all_row, all_row[0]['value']);
+		    return height - yChart_fav_show(all_row[0].value);//all_row['value']);//fav_show_data[i][index]['value']);
+		}
+		//else{
+		//    return height - yChart_fav_show(0);
+		//}
 	    })
-	    .attr('opacity',0);
-
-		
-    };
+	    .attr('opacity', function(d, i){
+		if (d.who === 'all'){
+		    return 0;
+		}else{
+		    return 1;
+		}
+	    });
+    }
+    //	    .data(fav_show_data, function(d){ return d.attribute; })
+    //	bars_fav_show.exit()
+    //	    .remove()
+    //	bars_fav_show.enter()
+    //	    .append("rect")
+    //	    .attr("class", "bar_fav_show")
+    //	    .attr("x", function(d) { return xChart_fav_show(d.attribute) +0.01*xChart_fav_show(d.attribute);})
+    //	    .attr("width", 10)
+    //	    .attr('fill', function(d, i){
+    //		if(d.value > 1.0){
+    //		    console.log('hi');
+    //		    return'#000000';
+    //		}else{
+    //		    return'#000000';
+    //		}
+    //	    })
+    //	    //.style("fill-opacity", function(d) { return d.count/maxCountFavShow;})
+    //	    //.attr("height", function(d, i) {
+    //	    //	return 0;
+    //	    //})
+    //	    //.transition()
+    //	    //.duration(400)
+    //	    //.delay(function (d, i) {
+    //	    //	return i * 20;
+    //	    //})
+    //	    .attr("y", function (d, i) {
+    //		return yChart_fav_show(d.value) ;
+    //	    })
+    //	    .attr("height", function (d, i) {
+    //		return height - yChart_fav_show(d.value) ;
+    //	    })
+    //	    .attr('opacity',0);
+    //
+    //		
+    //    };
     
     /**
      * setupSections - each section is activated
@@ -415,8 +420,10 @@ var scrollVis = function () {
     var setupSections = function () {
 	// activateFunctions are called each
 	// time the active section changes
-	activateFunctions[0] = showNewShow;
-	activateFunctions[1] = showFavShow;
+	activateFunctions[0] = showFavShow_all;
+	activateFunctions[1] = showFavShow_bet;
+	activateFunctions[2] = showNewShow_all;
+	activateFunctions[3] = showNewShow_bet;
 	//      activateFunctions[2] = showGrid;
 	//      activateFunctions[3] = highlightGrid;
 	//      activateFunctions[4] = showBar;
@@ -431,7 +438,7 @@ var scrollVis = function () {
 	// Most sections do not need to be updated
 	// for all scrolling and so are set to
 	// no-op functions.
-	for (var i = 0; i < 2; i++) {
+	for (var i = 0; i < 4; i++) {
 	    updateFunctions[i] = function () {};
 	}
 	///updateFunctions[7] = updateCough;
@@ -460,7 +467,147 @@ var scrollVis = function () {
      * shows: intro title
      *
      */
-    function showNewShow() {
+    
+    
+    
+    function showFavShow_all() {
+	// ensure bar axis is set
+	
+	showAxis(xAxis_fav_show, yAxis_fav_show);
+	
+	g.selectAll('.bar_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+	
+	
+	var width = 20;
+	
+	g.selectAll('.bar_fav_show')
+	    .transition()
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('bet_fan')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i, nodes) {
+	    	for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return yChart_fav_show(nodes[i].__data__["value"]);
+		    }
+		}
+		//if(d.who != 'all'){
+	    	//    return yChart_fav_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i, nodes) {
+		for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return height - yChart_fav_show(nodes[i].__data__["value"]);
+		    }
+		}
+	    	//if(d.who != 'all'){
+	    	//return height - yChart_fav_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		return '#000000';
+	    });
+	
+	//.transition()
+	//.delay(function (d, i) { return 30 * (i + 1);})
+	//.duration(0)
+	//.attr('opacity', 1.0);
+	//.attr('width', function (d) { return xBarScale(d.attribute); });
+	
+	
+    }
+    
+    
+    function showFavShow_bet() {
+	
+	
+	showAxis(xAxis_fav_show, yAxis_fav_show);//fav_show);
+	
+	var width = 20;
+	g.selectAll('.bar_fav_show')	
+	    .transition()
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('bet_fan')*xChart_fav_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return yChart_fav_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return height - yChart_fav_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		if(d.who ==='all'){
+		    return'#000000';
+		}else if(d.who === 'bet_fan'){
+		    return'#ggg';
+		}else{
+		    return '#bbb';
+		}
+	    })
+	;
+//	    .transition()
+//	    .duration(300)
+//	    .attr('opacity', 0);
+	
+	g.selectAll('.bar_new_show')
+	    .transition()
+	    .delay(function (d, i) { return 30 * (i + 1);})
+	    .duration(600)
+	    .attr('opacity', 0.0);
+
+
+	
+    }
+
+
+
+
+	function showNewShow_all() {
 	// ensure bar axis is set
 
 	showAxis(xAxis_new_show, yAxis_new_show);
@@ -470,12 +617,60 @@ var scrollVis = function () {
 	    .duration(300)
 	    .attr('opacity', 0);
 
-		
+
+	var width = 20;
+	
 	g.selectAll('.bar_new_show')
+	    .transition()
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('bet_fan')*xChart_new_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i, nodes) {
+	    	for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return yChart_new_show(nodes[i].__data__["value"]);
+		    }
+		}
+		//if(d.who != 'all'){
+	    	//    return yChart_new_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i, nodes) {
+		for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return height - yChart_new_show(nodes[i].__data__["value"]);
+		    }
+		}
+	    	//if(d.who != 'all'){
+	    	    //return height - yChart_new_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		return '#000000';
+	    });
+	   
 	    //.transition()
 	    //.delay(function (d, i) { return 30 * (i + 1);})
 	    //.duration(0)
-	    .attr('opacity', 1.0);
+	    //.attr('opacity', 1.0);
 	    //.attr('width', function (d) { return xBarScale(d.attribute); });
 
 
@@ -489,22 +684,65 @@ var scrollVis = function () {
      * shows: filler count title
      *
      */
-    function showFavShow() {
+    function showNewShow_bet() {
 
 
-	showAxis(xAxis_fav_show, yAxis_fav_show);
+	showAxis(xAxis_new_show, yAxis_new_show);//fav_show);
 	
-	
-	g.selectAll('.bar_new_show')
+	var width = 20;
+	g.selectAll('.bar_new_show')	
 	    .transition()
-	    .duration(300)
-	    .attr('opacity', 0);
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('bet_fan')*xChart_new_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return yChart_new_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return height - yChart_new_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		if(d.who ==='all'){
+		    return'#000000';
+		}else if(d.who === 'bet_fan'){
+		    return'#ggg';
+		}else{
+		    return '#bbb';
+		}
+	    })
+	;
+//	    .transition()
+//	    .duration(300)
+//	    .attr('opacity', 0);
 	
 	g.selectAll('.bar_fav_show')
 	    .transition()
 	    .delay(function (d, i) { return 30 * (i + 1);})
 	    .duration(600)
-	    .attr('opacity', 1.0);
+	    .attr('opacity', 0.0);
 
 
 	
@@ -819,7 +1057,7 @@ var scrollVis = function () {
    * @param rawData - data read in from file
    */
     function getWords(rawData) {
-	console.loc(rawData);
+//	console.loc(rawData);
     return rawData.map(function (d, i) {
       // is this word a filler word?
       d.filler = (d.filler === '1') ? true : false;
