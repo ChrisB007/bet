@@ -11,7 +11,9 @@ var scrollVis = function () {
     var width = 400;
     var height = 300;
     var margin = { top: 0, left: 100, bottom: 500, right: 0 };
-    
+
+
+    var bar_fav_width = 12;
     // Keep track of which visualization
     // we are on and which was the last
     // index activated. When user scrolls
@@ -218,7 +220,7 @@ var scrollVis = function () {
 	var maxCountNewShow = d3.max(new_show_data, function(d){ return + d.count; });
 	var maxCountFavShow = d3.max(fav_show_data, function(d){ return + d.count; });
 	    
-	var width=20;
+	var bar_new_width=20;
 	
 	var bars_new_show = g.selectAll(".bar_new_show")
 	    .data(new_show_data);//, function(d){ return d.attribute; })
@@ -238,7 +240,7 @@ var scrollVis = function () {
 		    return  xChart_new_show(d.attribute) + xChart_new_show_l2('all')*xChart_new_show.bandwidth()*1.5;
 		}
 	    })
-	    .attr("width", width/2)//xChart_new_show_l2.bandwidth()*10)
+	    .attr("width", bar_new_width/2)//xChart_new_show_l2.bandwidth()*10)
 	    .attr('fill', function(d, i){
 		if(d.who ==='all'){
 		    return'#000000';
@@ -279,7 +281,7 @@ var scrollVis = function () {
 		if (d.who === 'all'){
 		    return 0;
 		}else{
-		    return 1;
+		    return 0;
 		}
 	    });
 	
@@ -309,7 +311,8 @@ var scrollVis = function () {
 	//console.log(xAxis_fav_show);
 	
 	yChart_fav_show.domain( [0, d3.max(fav_show_data, function(d){ return + d.value; })] );
-	
+
+	//var bar_fav_width = 11;
 
 	var bars_fav_show = g.selectAll(".bar_fav_show")
 	    .data(fav_show_data);//, function(d){ return d.attribute; })
@@ -329,7 +332,7 @@ var scrollVis = function () {
 		    return  xChart_fav_show(d.attribute) + xChart_fav_show_l2('all')*xChart_fav_show.bandwidth()*1.5;
 		}
 	    })
-	    .attr("width", width/2)//xChart_fav_show_l2.bandwidth()*10)
+	    .attr("width", bar_fav_width/2)
 	    .attr('fill', function(d, i){
 		if(d.who ==='all'){
 		    return'#000000';
@@ -481,13 +484,13 @@ var scrollVis = function () {
 	    .attr('opacity', 0);
 	
 	
-	var width = 20;
+
 	
 	g.selectAll('.bar_fav_show')
 	    .transition()
 	    .delay(0)
 	    .duration(1000)
-	    .attr('width', width/2)
+	    .attr('width', bar_fav_width/2)
 	    .attr('opacity', function(d, i){
 	    	if (d.who === 'all'){
 	    	    return 0;
@@ -545,12 +548,12 @@ var scrollVis = function () {
 	
 	showAxis(xAxis_fav_show, yAxis_fav_show);//fav_show);
 	
-	var width = 20;
+	//var bar_fav_width = 11;
 	g.selectAll('.bar_fav_show')	
 	    .transition()
 	    .delay(0)
 	    .duration(1000)
-	    .attr('width', width/2)
+	    .attr('width', bar_fav_width/2)
 	    .attr('opacity', function(d, i){
 	    	if (d.who === 'all'){
 	    	    return 0;
@@ -618,13 +621,13 @@ var scrollVis = function () {
 	    .attr('opacity', 0);
 
 
-	var width = 20;
+	var bar_new_width = 20;
 	
 	g.selectAll('.bar_new_show')
 	    .transition()
 	    .delay(0)
 	    .duration(1000)
-	    .attr('width', width/2)
+	    .attr('width', bar_new_width/2)
 	    .attr('opacity', function(d, i){
 	    	if (d.who === 'all'){
 	    	    return 0;
@@ -689,12 +692,12 @@ var scrollVis = function () {
 
 	showAxis(xAxis_new_show, yAxis_new_show);//fav_show);
 	
-	var width = 20;
+	var bar_new_width = 20;
 	g.selectAll('.bar_new_show')	
 	    .transition()
 	    .delay(0)
 	    .duration(1000)
-	    .attr('width', width/2)
+	    .attr('width', bar_new_width/2)
 	    .attr('opacity', function(d, i){
 	    	if (d.who === 'all'){
 	    	    return 0;
