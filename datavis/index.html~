@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="graphic">
+      <script type="text/javascript" src="d3_show_fan_comp/hbar_script.js"></script>
+    </div>
+
+    <div id="black_and_society">
+      <script type="text/javascript" src="d3_bet_fan_non_fan_comp/black_society_questions.js"></script>
+    </div>
+
+
+    <div id="engagement">
+      <script type="text/javascript" src="d3_bet_fan_non_fan_comp/engagement.js"></script>
+    </div>
+  </body>
+</html>

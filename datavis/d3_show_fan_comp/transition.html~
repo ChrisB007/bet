@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  
+<body>
+
+  <div class="container">
+    <div class="row">
+      <button id="2014">
+	2014
+      </button>
+      <button id="2002">
+	2002
+      </button>
+
+    </div>
+    <div id="chart">
+      <script type="text/javascript" src="transition.js"></script>
+    </div>
+  </div>
+
+
+</body>

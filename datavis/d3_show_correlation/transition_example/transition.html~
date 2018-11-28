@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  
+<body>
+
+  <div class="container">
+    <div class="row">
+      <button id="new_show">
+	New Show
+      </button>
+      <button id="favorite_show">
+	Favorite Show
+      </button>
+
+    </div>
+    <br>
+    <div id="buttonContainer">
+      <button id="sortAscending">Sort Ascending</button>
+      <button id="sortDescending">Sort Descending</button>
+    </div>
+
+  </div>
+  <div id="chart">
+    <script type="text/javascript" src="transition.js"></script>
+  </div>
+
+</body>

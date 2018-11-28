@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="scatter-load">
+      <script type="text/javascript" src="hbar_script.js"></script>
+    </div>
+        
+  </body>
+</html>

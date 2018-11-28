@@ -1,0 +1,52 @@
+body {
+    font-family:"Helvetica Neue";
+    color: #000000;
+}
+.name {
+    float:right;
+    color:#27aae1;
+}
+.axis {
+    fill: none;
+    stroke: #AAA;
+    stroke-width: 1px;
+}
+text {
+    stroke: none;
+    fill: #666666;
+    font-size: .6em;
+    font-family:"Helvetica Neue"
+}
+.label {
+    fill: #414241;
+}
+.node {
+    cursor:pointer;
+}
+.dot {
+    opacity: .7;
+    cursor: pointer;
+}
+
+
+body {
+    font-family: "Arial", sans-serif;
+}
+
+.bar {
+    fill: #5f89ad;
+}
+
+.axis {
+    font-size: 13px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    display: none;
+}
+
+.label {
+    font-size: 13px;
+}
