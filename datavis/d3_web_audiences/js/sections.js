@@ -477,8 +477,8 @@ var scrollVis = function () {
 	hideAxis();
 	g.selectAll('.bar_logreg')
 	    .transition()
-	    .duration(0)
-	    .attr('opacity', 0);
+	    .duration(100)
+	    .attr('opacity', 1);
 
 
 	g.selectAll('.legend')
@@ -496,8 +496,10 @@ var scrollVis = function () {
 	g.selectAll('.bar_tsne')
 	    .transition()
 	    //.delay(function (d, i) { return 0.05 * (i + 1);})
-	    .duration(100)
-	    .attr('opacity', 1.0);
+	    .duration(500)
+	    .attr('opacity', 1.0)
+	    .attr("cx", function(d) { return xChart_tsne(d.x); })
+	    .attr("cy", function(d) { return yChart_tsne(d.y); });
 	    //.attr('width', function (d) { return xBarScale(d.attribute); });
 
 
@@ -517,8 +519,18 @@ var scrollVis = function () {
 	
 	g.selectAll('.bar_tsne')	
 	    .transition()
-	    .duration(100)
-	    .attr('opacity', 0);
+	    .duration(500)
+	    .attr('opacity', function(d) {
+		if (d.cluster == 0){
+		    return 0.8;
+		}else{
+		    return 0.05;
+		}
+	    })
+	    .attr("cx", function(d) { return xChart_tsne(d.x*0.6+20); })
+	    .attr("cy", function(d) { return yChart_tsne(d.y*0.6-40); });
+
+	    
 
 	//showAxis(xAxis_logreg, yAxis_logreg);
 
