@@ -156,8 +156,8 @@ var scrollVis = function () {
 	    
 	    // get the counts of filler words for the
 	    // bar chart display
-	    //var tsne_data = get_tsne(rawData);//groupByWord(fillerWords);
-	    var tsne_data = rawData;
+	    var tsne_data = get_tsne(rawData);//groupByWord(fillerWords);
+	    //var tsne_data = rawData;
 	    
 	    console.log(tsne_data);
 	    //var countMax = d3.max(tsne_data, function (d) { return d.value;});
@@ -307,7 +307,40 @@ var scrollVis = function () {
 	    .attr('opacity', 1);
 
 
+	//var colorScale = ['#000000', '#ffaa00', '#aaaaaa']
 
+	//var color = d3.scaleOrdinal(colorScale);//categorical[0].name])
+
+
+	var legend = g.selectAll(".legend")
+	    .data([0,1,2])//tsne_data, function(d) { return d.cluster; })
+	legend.exit()
+	    .remove()
+	legend.enter().append("rect")
+	    .attr("class", "legend")
+	    .attr("x", width - 18)
+	    .attr("width", 18)
+	    .attr("height", 18)
+	    .style("fill", function(d) { return colorScale(d); })
+	    .attr("transform", function(d,i) { return "translate(0," + i * 20 + ")"; })
+	    .style("opacity",1);
+
+
+
+	legend.append("text")
+	    .attr("x", width - 24)
+	    .attr("y", 9)
+	    .attr("dy", ".35em")
+	    .style("text-anchor", "end")
+	    .text(function(d) {return d; });
+
+//	legend
+//	    .transition()
+//	    .duration(200)
+//	    .delay(function(d,i){ return 100 + 100 * i; })
+//	    .style("opacity","1");
+	
+	    //.attr("x"
 
 	
 	//g.select('.y').call(yAxis_tsne);
@@ -447,11 +480,23 @@ var scrollVis = function () {
 	    .duration(0)
 	    .attr('opacity', 0);
 
-		
+
+	g.selectAll('.legend')
+	    .transition()
+	    .duration(1000)
+	    .attr("x", width - 18)
+	    .attr("width", 18)
+	    .attr("height", 18)
+	    .attr("transform", function(d,i) { return "translate(0," + i * 20 + ")"; })
+	    .style("opacity",1);
+
+
+
+	
 	g.selectAll('.bar_tsne')
 	    .transition()
 	    //.delay(function (d, i) { return 0.05 * (i + 1);})
-	    .duration(0)
+	    .duration(100)
 	    .attr('opacity', 1.0);
 	    //.attr('width', function (d) { return xBarScale(d.attribute); });
 
@@ -472,16 +517,29 @@ var scrollVis = function () {
 	
 	g.selectAll('.bar_tsne')	
 	    .transition()
-	    .duration(0)
+	    .duration(100)
 	    .attr('opacity', 0);
 
-	showAxis(xAxis_logreg, yAxis_logreg);
+	//showAxis(xAxis_logreg, yAxis_logreg);
 
+	
+	g.selectAll('.legend')
+	    .transition()
+	    .duration(1000)
+	    .style("opacity", function(d){
+	    	console.log('hi');
+	    	return  d == 0 ? 1 : 0;
+	    })
+	    //.selectAll('rect')
+	    .attr("x", 100)
+	    .attr("y", 10)
+	    .attr("height", height);
+	
 	
 	g.selectAll('.bar_logreg')
 	    .transition()
 	    .duration(0)
-	    .attr('opacity', 1.0);
+	    .attr('opacity', 0.0);
 
 
 	
@@ -832,7 +890,16 @@ var scrollVis = function () {
     
     function get_tsne(data) {
 	console.log('hii');
-	return data[0]['tsne'];
+	var tsne_data = [];
+	for(var i=0;i<data.length;i++){
+	    //console.log(i%100);
+	    if (i%4 == 0){
+		//console.log(i);
+		tsne_data.push(data[i]);
+	    }
+	}
+	//return data[0]['tsne'];
+	return tsne_data;
     }
     function get_logreg(data) {
 	return data[1]['logreg'];

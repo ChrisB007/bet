@@ -13,7 +13,7 @@ var scrollVis = function () {
     var margin = { top: 0, left: 100, bottom: 500, right: 0 };
 
 
-    var bar_fav_width = 12;
+
     // Keep track of which visualization
     // we are on and which was the last
     // index activated. When user scrolls
@@ -37,47 +37,52 @@ var scrollVis = function () {
     // We will set the domain when the
     // data is processed.
     // @v4 using new scale names
-    
+
+    var xChart_fav_show = d3.scaleBand()
+	.rangeRound([0, width])
+	.padding(0.5);     
+    var xChart_fav_show_l2 = d3.scaleBand();
     var yChart_fav_show = d3.scaleLinear()
 	.range([height, 0]);
     
-    
     var xAxis_fav_show = d3.axisBottom();
-        
-    
     var yAxis_fav_show = d3.axisLeft()
         .scale(yChart_fav_show);
-    
+
 
     
+
+    var xChart_new_show = d3.scaleBand()
+	.rangeRound([0, width])
+	.padding(0.5);      
+    var xChart_new_show_l2 = d3.scaleBand();
     var yChart_new_show = d3.scaleLinear()
 	.range([height, 0]);
-    
-    
+
     var xAxis_new_show = d3.axisBottom()
         .scale(xChart_new_show);
-    
     var yAxis_new_show = d3.axisLeft()
         .scale(yChart_new_show);
 
 
 
-
-    var xChart_new_show = d3.scaleBand()
+    var xChart_discover_new_show = d3.scaleBand()
 	.rangeRound([0, width])
 	.padding(0.5);      
+    var xChart_discover_new_show_l2 = d3.scaleBand();
+    var yChart_discover_new_show = d3.scaleLinear()
+	.range([height, 0]);
+
+    var xAxis_discover_new_show = d3.axisBottom()
+        .scale(xChart_discover_new_show);
+    var yAxis_discover_new_show = d3.axisLeft()
+        .scale(yChart_discover_new_show);
+
     
 
-    var xChart_new_show_l2 = d3.scaleBand();
-    var xChart_fav_show_l2 = d3.scaleBand();
-    
-    var xChart_fav_show = d3.scaleBand()
-	//.domain(fav_show_data.map(function(entry){
-	//    return entry.attribute;
-	//}))
-	.rangeRound([0, width])
-	.padding(0.5);      
-
+    var bar_new_width=20;
+    var bar_fav_width = 12;
+    var bar_discover_new_width=10;
     
     // When scrolling to a new section
     // the activation function for that
@@ -128,7 +133,14 @@ var scrollVis = function () {
 	    new_show_data = new_show_data.sort(function(a, b) {
 		return d3.descending(a.value, b.value);
 	    });
-	    console.log(new_show_data);
+
+
+	    var discover_new_show_data = get_discover_new_show(rawData);//groupByWord(fillerWords);
+	    var countMax_discover_new_sho = d3.max(discover_new_show_data, function (d) { return +d.value;});
+	    discover_new_show_data = discover_new_show_data.sort(function(a, b) {
+		return d3.descending(a.value, b.value);
+	    });
+
 	    // set the bar scale's domain
 	    	    //xBarScale.domain([0, countMax]);
 
@@ -144,9 +156,15 @@ var scrollVis = function () {
 		return entry.attribute;
 	    }));
 
+	    xChart_discover_new_show.domain(discover_new_show_data.map(function(entry){
+		return entry.attribute;
+	    }));
+
+	    
 	    valueNames = ['all', 'bet_fan', 'non_bet_fan']
 
 	    var xChart_new_show_l2 = d3.scaleBand();
+	    var xChart_discover_new_show_l2 = d3.scaleBand();
 	    var xChart_fav_show_l2 = d3.scaleBand();
 	    
 	    //xChart_new_show_l2.domain(d3.range(valueNames))
@@ -157,16 +175,10 @@ var scrollVis = function () {
 	    }));
 		    
 
-	    // get aggregated histogram data
-	    
-	    //var histData = getHistogram(fillerWords);
-	    // set histogram's domain
-	    //var histMax = d3.max(histData, function (d) { return d.length; });
-	    //yHistScale.domain([0, histMax]);
 	    var wordData = 0;
 	    var histData = 0;
 	    var fillerCounts = 0;
-	    setupVis(new_show_data, fav_show_data, histData);
+	    setupVis(new_show_data, fav_show_data, discover_new_show_data);
 	    
 	    setupSections();
 	});
@@ -182,14 +194,16 @@ var scrollVis = function () {
      *  element for each filler word type.
      * @param histData - binned histogram data
      */
-    var setupVis = function (new_show_data, fav_show_data, histData) {
+    var setupVis = function (new_show_data, fav_show_data, discover_new_show_data) {
 	// axis
 	
 	var categories  = ['all', 'bet_fan', 'non_bet_fan'];
 	xChart_new_show_l2.domain(categories).bandwidth(2);
+	xChart_discover_new_show_l2.domain(categories).bandwidth(2);
 	xChart_fav_show_l2.domain(categories).bandwidth(2);
 	
 	xAxis_new_show.scale(xChart_new_show);
+	xAxis_discover_new_show.scale(xChart_discover_new_show);
 	
 	g.append('g')
 	    .attr('class', 'x axis')
@@ -220,7 +234,7 @@ var scrollVis = function () {
 	var maxCountNewShow = d3.max(new_show_data, function(d){ return + d.count; });
 	var maxCountFavShow = d3.max(fav_show_data, function(d){ return + d.count; });
 	    
-	var bar_new_width=20;
+
 	
 	var bars_new_show = g.selectAll(".bar_new_show")
 	    .data(new_show_data);//, function(d){ return d.attribute; })
@@ -284,21 +298,81 @@ var scrollVis = function () {
 		    return 0;
 		}
 	    });
+
+
+	//DISCOVERING A PARTICULAR NEW SHOW
 	
-	//g.select('.y').call(yAxis_new_show);
-	//
-	//g.select('.x.axis')
-	//    .attr("transform", "translate(0," + height/2 + ")")
-	//    .call(xAxis_new_show);
-	//.selectAll("text")
-	//.style("text-anchor", "end")
-	//.attr("dx", "-.8em")
-	//.attr("dy", ".0em")
-	//.attr("transform", function(d){
-	//	return "rotate(-90)";
-	//});
+	yChart_discover_new_show.domain( [0, d3.max(discover_new_show_data, function(d){ return + d.value; })+0.01] );
 	
+	var maxCountNewShow = d3.max(discover_new_show_data, function(d){ return + d.count; });
+	var maxCountFavShow = d3.max(fav_show_data, function(d){ return + d.count; });
+	    
+
 	
+	var bars_discover_new_show = g.selectAll(".bar_discover_new_show")
+	    .data(discover_new_show_data);//, function(d){ return d.attribute; })
+	bars_discover_new_show.exit()
+	    .remove()
+	bars_discover_new_show.enter()
+	    .append("rect")
+	    .attr("class", "bar_discover_new_show")
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('bet_fan')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("width", bar_discover_new_width/2)//xChart_discover_new_show_l2.bandwidth()*10)
+	    .attr('fill', function(d, i){
+		if(d.who ==='all'){
+		    return'#000000';
+		}else if(d.who === 'bet_fan'){
+		    return'#000000';
+		}else{
+		    return '#000000';
+		}
+	    })
+	    .attr('stroke', 'black')
+	    .attr("y", function (d, i) {
+		if(d.who === 'all'){
+		    return yChart_discover_new_show(+d.value);
+		}
+		else{// if(d.who === 'bet_fan'){
+		    //console.log(d, i, discover_new_show_data);
+		    all_row = discover_new_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
+		    return yChart_discover_new_show(all_row[0].value);//all_row['value']);//discover_new_show_data[i][index]['value']);
+		}
+		//else{
+		//    return yChart_discover_new_show(0);
+		//}
+	    })
+	    .attr("height", function (d, i) {
+		if(d.who === 'all'){
+		    return height - yChart_discover_new_show(+d.value);
+		}
+		else{// if (d.who === 'bet_fan'){
+		    all_row = discover_new_show_data.filter(x => x.who=="all" && x.attribute == d.attribute);
+		    //console.log(d, i, all_row, all_row[0]['value']);
+		    return height - yChart_discover_new_show(all_row[0].value);//all_row['value']);//discover_new_show_data[i][index]['value']);
+		}
+		//else{
+		//    return height - yChart_discover_new_show(0);
+		//}
+	    })
+	    .attr('opacity', function(d, i){
+		if (d.who === 'all'){
+		    return 0;
+		}else{
+		    return 0;
+		}
+	    });
+
+	//FAVORITE SHOWS
 	
 	xChart_fav_show.domain(fav_show_data.map(function(entry){
 	    return entry.attribute;
@@ -454,8 +528,11 @@ var scrollVis = function () {
 	// time the active section changes
 	activateFunctions[0] = showFavShow_all;
 	activateFunctions[1] = showFavShow_bet;
-	activateFunctions[2] = showNewShow_all;
-	activateFunctions[3] = showNewShow_bet;
+	activateFunctions[2] = showDiscoverNewShow_all;
+	activateFunctions[3] = showDiscoverNewShow_bet;
+	activateFunctions[4] = showNewShow_all;
+	activateFunctions[5] = showNewShow_bet;
+
 	//      activateFunctions[2] = showGrid;
 	//      activateFunctions[3] = highlightGrid;
 	//      activateFunctions[4] = showBar;
@@ -470,7 +547,7 @@ var scrollVis = function () {
 	// Most sections do not need to be updated
 	// for all scrolling and so are set to
 	// no-op functions.
-	for (var i = 0; i < 4; i++) {
+	for (var i = 0; i < 6; i++) {
 	    updateFunctions[i] = function () {};
 	}
 	///updateFunctions[7] = updateCough;
@@ -511,9 +588,12 @@ var scrollVis = function () {
 	    .transition()
 	    .duration(300)
 	    .attr('opacity', 0);
-	
-	
 
+	g.selectAll('.bar_discover_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+	
 	
 	g.selectAll('.bar_fav_show')
 	    .transition()
@@ -577,6 +657,13 @@ var scrollVis = function () {
 	
 	
 	showAxis(xAxis_fav_show, yAxis_fav_show);//fav_show);
+
+
+	g.selectAll('.bar_discover_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+
 	
 	//var bar_fav_width = 11;
 	g.selectAll('.bar_fav_show')	
@@ -638,11 +725,11 @@ var scrollVis = function () {
     }
 
 
-
-
-	function showNewShow_all() {
+    
+    
+    function showNewShow_all() {
 	// ensure bar axis is set
-
+	
 	showAxis(xAxis_new_show, yAxis_new_show);
 	
 	g.selectAll('.bar_fav_show')
@@ -650,8 +737,14 @@ var scrollVis = function () {
 	    .duration(300)
 	    .attr('opacity', 0);
 
+	
+	g.selectAll('.bar_discover_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
 
-	var bar_new_width = 20;
+
+
 	
 	g.selectAll('.bar_new_show')
 	    .transition()
@@ -722,7 +815,14 @@ var scrollVis = function () {
 
 	showAxis(xAxis_new_show, yAxis_new_show);//fav_show);
 	
-	var bar_new_width = 20;
+
+	g.selectAll('.bar_discover_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+
+
+
 	g.selectAll('.bar_new_show')	
 	    .transition()
 	    .delay(0)
@@ -780,6 +880,164 @@ var scrollVis = function () {
 
 	
     }
+
+
+
+    
+    function showDiscoverNewShow_all() {
+	// ensure bar axis is set
+	
+	showAxis(xAxis_discover_new_show, yAxis_discover_new_show);
+	
+	g.selectAll('.bar_fav_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+
+	
+	g.selectAll('.bar_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+
+
+	
+	g.selectAll('.bar_discover_new_show')
+	    .transition()
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', bar_discover_new_width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('bet_fan')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i, nodes) {
+	    	for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return yChart_discover_new_show(nodes[i].__data__["value"]);
+		    }
+		}
+		//if(d.who != 'all'){
+	    	//    return yChart_discover_new_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i, nodes) {
+		for (i=0;i<nodes.length;i++){
+		    if (nodes[i].__data__["attribute"] === d.attribute && nodes[i].__data__["who"] === "all"){
+			return height - yChart_discover_new_show(nodes[i].__data__["value"]);
+		    }
+		}
+	    	//if(d.who != 'all'){
+	    	    //return height - yChart_discover_new_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		return '#000000';
+	    });
+	   
+	    //.transition()
+	    //.delay(function (d, i) { return 30 * (i + 1);})
+	    //.duration(0)
+	    //.attr('opacity', 1.0);
+	    //.attr('width', function (d) { return xBarScale(d.attribute); });
+
+
+    }
+    
+    /**
+     * showFillerTitle - filler counts
+     *
+     * hides: intro title
+     * hides: square grid
+     * shows: filler count title
+     *
+     */
+    function showDiscoverNewShow_bet() {
+
+
+	showAxis(xAxis_discover_new_show, yAxis_discover_new_show);//fav_show);
+	
+
+	g.selectAll('.bar_new_show')
+	    .transition()
+	    .duration(300)
+	    .attr('opacity', 0);
+
+
+	g.selectAll('.bar_discover_new_show')	
+	    .transition()
+	    .delay(0)
+	    .duration(1000)
+	    .attr('width', bar_discover_new_width/2)
+	    .attr('opacity', function(d, i){
+	    	if (d.who === 'all'){
+	    	    return 0;
+	    	}else{
+	    	    return 1;
+	    	}
+	    })
+
+	    .attr("x", function(d) {
+		if(d.who === 'all'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else if(d.who === 'bet_fan'){
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('bet_fan')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+		else{
+		    return  xChart_discover_new_show(d.attribute) + xChart_discover_new_show_l2('all')*xChart_discover_new_show.bandwidth()*1.5;
+		}
+	    })
+	    .attr("y", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return yChart_discover_new_show(+d.value);
+	    	//}
+	    })
+	    .attr("height", function (d, i) {
+	    	//if(d.who != 'all'){
+	    	    return height - yChart_discover_new_show(+d.value);
+	    	//}
+	    })
+	    .attr('fill', function(d, i){
+		if(d.who ==='all'){
+		    return'#000000';
+		}else if(d.who === 'bet_fan'){
+		    return'#ffaa00';
+		}else{
+		    return '#aaa';
+		}
+	    })
+	;
+//	    .transition()
+//	    .duration(300)
+//	    .attr('opacity', 0);
+	
+	g.selectAll('.bar_fav_show')
+	    .transition()
+	    .delay(function (d, i) { return 30 * (i + 1);})
+	    .duration(600)
+	    .attr('opacity', 0.0);
+
+
+	
+    }
+
+
+    
     /**
      * showGrid - square grid
      *
@@ -886,7 +1144,7 @@ var scrollVis = function () {
 //	    .attr('y', function () { return height; })
 //	    .style('opacity', 0);
 //	
-//	g.selectAll('.bar_new_show')
+//	g.selectAll('.bar_discover_new_show')
 //	    .transition()
 //	    .delay(function (d, i) { return 300 * (i + 1);})
 //	    .duration(600)
@@ -1129,6 +1387,19 @@ var scrollVis = function () {
 		//}
 	    }
 	}
+	return show_data;
+    }
+    
+    function get_discover_new_show(data) {
+	var show_data = [];
+	for(var i = 0; i < data.length; i++){
+	    if(data[i]["feature"] === "discover_new_shows"){
+		//		if(data[i]["who"] === "all"){
+		show_data.push(data[i]);
+		//}
+	    }
+	}
+	console.log(show_data);
 	return show_data;
     }
     function get_fav_show(data) {
