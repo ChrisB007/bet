@@ -127,7 +127,7 @@ var scrollVis = function () {
 	    }));
 
 	    
-	    valueNames = ['all', 'bet_fan', 'non_bet_fan']
+	    valueNames = ['Not a BET fan', 'BET fan']
 
 	    var xChart__l2 = d3.scaleBand();
 	    
@@ -246,13 +246,13 @@ var scrollVis = function () {
 		
 
 
-	var colorScale = ['#000000', '#ffaa00', '#aaaaaa']
+	var colorScale = ['#000000', '#ffaa00']//, '#aaaaaa']
 
 	var color = d3.scaleOrdinal(colorScale);//categorical[0].name])
 	
 
 	var legend = svg.selectAll(".legend")
-	    .data(['all', 'bet_fan', 'non_bet_fan'])
+	    .data(['Not a BET fan', 'BET fan'])
 	    .enter().append("g")
 	    .attr("class", "legend")
 	    .attr("transform", function(d,i) { return "translate(0," + i * 20 + ")"; })
