@@ -156,10 +156,11 @@ var scrollVis = function () {
 	    
 	    // get the counts of filler words for the
 	    // bar chart display
-	    var tsne_data = get_tsne(rawData);//groupByWord(fillerWords);
+	    var tsne_data = get_tsne(rawData['tsne']);//groupByWord(fillerWords);
 	    //var tsne_data = rawData;
 	    
-	    console.log(tsne_data);
+	    var cluster_data = rawData['cluster'];
+
 	    //var countMax = d3.max(tsne_data, function (d) { return d.value;});
 	    //tsne_data = tsne_data.sort(function(a, b) {
 	    //	return d3.descending(a.value, b.value);
@@ -198,7 +199,7 @@ var scrollVis = function () {
 	    var wordData = 0;
 	    var histData = 0;
 	    var fillerCounts = 0;
-	    setupVis(tsne_data, logreg_data, histData);
+	    setupVis(tsne_data, cluster_data, histData);
 	    
 	    setupSections();
 	});
@@ -214,7 +215,7 @@ var scrollVis = function () {
      *  element for each filler word type.
      * @param histData - binned histogram data
      */
-    var setupVis = function (tsne_data, logreg_data, histData) {
+    var setupVis = function (tsne_data, cluster_data, histData) {
 	// axis
 	
 	xChart_tsne.domain( [d3.min(tsne_data, function(d){return +d.x;}) , d3.max(tsne_data, function(d){ return + d.x; })] );
@@ -225,10 +226,10 @@ var scrollVis = function () {
 	    .attr('class', 'x axis')
 	    .attr('transform', 'translate(0,' + height + ')')
 	    .call(xAxis_tsne)
-	    .selectAll('text')
-	    .style('text-anchor','end')
-	    .attr("dx", "-1em")
-	    .attr("dy", "-0.5em")
+	    //.selectAll('text')
+	    //.style('text-anchor','end')
+	    //.attr("dx", "-1em")
+	    //.attr("dy", "-0.5em")
 	    //.attr('transform', function(d){
 	    //	return "rotate(-90)";
 	    //})
@@ -241,8 +242,8 @@ var scrollVis = function () {
 	g.append("g")
 	    .attr("class", "y axis")
 	    .call(yAxis_tsne)
-	    ;
-	g.select('.y.axis').style('opacity', 0.0).call(wrap, 10);
+	    .style('opacity', 0);
+	///g.select('.y.axis').style('opacity', 0.0).call(wrap, 10);
 	
 
 	yChart_tsne.domain( [d3.min(tsne_data, function(d){return +d.y;}) , d3.max(tsne_data, function(d){ return + d.y; })] );
@@ -252,45 +253,8 @@ var scrollVis = function () {
 	    
 	console.log(xChart_tsne);
 
-//	var bars_tsne = g.selectAll(".bar_tsne")
-//	    .data(tsne_data, function(d){ return d.x; })
-//	bars_tsne.exit()
-//	    .remove()
-//	bars_tsne.enter()
-//	    .append("rect")
-//	    .attr("class", "bar_tsne")
-//	    .attr("x", function(d) { return xChart_tsne(d.x);})
-//	    //.attr("width", 20)
-//	    //.attr('fill', function(d, i){
-//	    //	if(d.value > 1.0){
-//	    //	    return'#000000';
-//	    //	}else{
-//	    //	    return'#000000';
-//	    //	}
-//	    //})
-//	    .style("fill-opacity", function(d) { return 1;})//d.bet_mean/maxCountBetMean;})
-//	    //.attr("height", function(d, i) {
-//	    //	return 0;
-//	    //})
-//	    //.transition()
-//	    //.duration(400)
-//	    //.delay(function (d, i) {
-//	    //	return i * 20;
-//	    //})
-//	    .attr("y", function (d, i) {
-//		return yChart_tsne(d.y) ;
-//	    })
-//	    //.attr("height", function (d, i) {
-//		//return height - yChart_tsne(d.value) ;
-//	    //})
-	//	    .attr('opacity', 0);
-
 
 	var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-	//d3.scaleLinear()
-	 //   .domain(linspace(0, 1, scale.length))
-	  //  .range(scale);
-	
 
 	var bars_tsne = g.selectAll(".bar_tsne")
 	    .data(tsne_data)
@@ -307,11 +271,6 @@ var scrollVis = function () {
 	    .attr('opacity', 1);
 
 
-	//var colorScale = ['#000000', '#ffaa00', '#aaaaaa']
-
-	//var color = d3.scaleOrdinal(colorScale);//categorical[0].name])
-
-
 	var legend = g.selectAll(".legend")
 	    .data([0,1,2])//tsne_data, function(d) { return d.cluster; })
 	legend.exit()
@@ -324,7 +283,6 @@ var scrollVis = function () {
 	    .style("fill", function(d) { return colorScale(d); })
 	    .attr("transform", function(d,i) { return "translate(0," + i * 20 + ")"; })
 	    .style("opacity",1);
-
 
 
 	legend.append("text")
@@ -342,77 +300,40 @@ var scrollVis = function () {
 	
 	    //.attr("x"
 
-	
-	//g.select('.y').call(yAxis_tsne);
-	//
-	//g.select('.x.axis')
-	//    .attr("transform", "translate(0," + height/2 + ")")
-	//    .call(xAxis_tsne);
-	    //.selectAll("text")
-	    //.style("text-anchor", "end")
-	    //.attr("dx", "-.8em")
-	    //.attr("dy", ".0em")
-	    //.attr("transform", function(d){
-	    //	return "rotate(-90)";
-	    //});
-	
-
-
-	yChart_logreg.domain(logreg_data.map(function(entry){
-		return entry.label;
-	}));
-
-	
-	
-	console.log(xAxis_logreg);
-	xAxis_logreg.scale(xChart_logreg);
-	console.log(xAxis_logreg);
-	
-	xChart_logreg.domain( [d3.min(logreg_data, function(d){return + d.value; }) -0.05, d3.max(logreg_data, function(d){ return + d.value; })+0.05] );
-	//d3.extent(logreg_data, function(d){return d.value;}));
-
-	var bars_logreg = g.selectAll(".bar_logreg")
-	    .data(logreg_data, function(d){ return d.label; })
-	bars_logreg.exit()
+	var text_cluster = g.selectAll("text")
+	    .data(cluster_data, function(d){
+		return d;
+	    })
+	text_cluster.exit()
 	    .remove()
-	bars_logreg.enter()
-	    .append("rect")
-	    .attr("class", "bar_logreg")
-	    .attr("y", function(d) { return yChart_logreg(d.label) +0.01*yChart_logreg(d.label);})
-	    .attr("height", 10)
-	    .attr('fill', function(d, i){
-		if(d.value > 1.0){
-		    console.log('hi');
-		    return'#000000';
-		}else{
-		    return'#000000';
-		}
+	text_cluster.enter()
+	    .append("text")
+	    .attr('class', 'text_cluster')
+	    .attr("x", function(d, i) {
+		return xChart_tsne(-30);
 	    })
-	    //.style("fill-opacity", function(d) { return d.count/maxCountFavShow;})
-	    //.attr("height", function(d, i) {
-	    //	return 0;
-	    //})
-	    //.transition()
-	    //.duration(400)
-	    //.delay(function (d, i) {
-	    //	return i * 20;
-	    //})
-	    .attr("x", function (d, i) {
-		if (d.value > 0) {
-		    return xChart_logreg(d.value);
-		}
-		else{
-		    console.log('hi');
-		    return xChart_logreg(0);
-		}
-		//return ( xChart_logreg(d.value) > 0) ? xChart_logreg(d.value) : 0 ;
+	    .attr("y", function(d, i) {
+		return yChart_tsne(50-i*15);
 	    })
-	    .attr("width", function (d) {
-	    	return  Math.abs(xChart_logreg(d.value) - xChart_logreg(0) );
+	    .text(function (d, i, att_data) {
+		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
+		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		//if (d.cluster_id == 0 ){
+		console.log(att_data[0].__data__);
+		//for(j=0;j<3;j++) {
+		//console.log(j, cols[j]);
+		//att_data.push(d.attributes[cols[j]]);
+		return pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
+		//    }
+		//}
+		//return att_data;
 	    })
-	    .attr('opacity',0);
+	    .attr("font-family", "sans-serif")
+	    .attr("font-size", "24px")
+	    .attr("fill", "black")
+	    .attr('opacity', 0.0);
+	
 
-		
     };
     
     /**
@@ -426,7 +347,10 @@ var scrollVis = function () {
 	// activateFunctions are called each
 	// time the active section changes
 	activateFunctions[0] = showNewShow;
-	activateFunctions[1] = showFavShow;
+	activateFunctions[1] = showGroup1;
+	activateFunctions[2] = showGroup2;
+	activateFunctions[3] = showGroup3;
+	
 	//      activateFunctions[2] = showGrid;
 	//      activateFunctions[3] = highlightGrid;
 	//      activateFunctions[4] = showBar;
@@ -441,7 +365,7 @@ var scrollVis = function () {
 	// Most sections do not need to be updated
 	// for all scrolling and so are set to
 	// no-op functions.
-	for (var i = 0; i < 2; i++) {
+	for (var i = 0; i < 4; i++) {
 	    updateFunctions[i] = function () {};
 	}
 	///updateFunctions[7] = updateCough;
@@ -475,11 +399,12 @@ var scrollVis = function () {
 
 //	showAxis(xAxis_tsne, yAxis_tsne);
 	hideAxis();
-	g.selectAll('.bar_logreg')
+	
+	g.selectAll('.text_cluster')
 	    .transition()
-	    .duration(100)
-	    .attr('opacity', 1);
-
+	    .duration(0)
+	    .attr('opacity', 0);
+	
 
 	g.selectAll('.legend')
 	    .transition()
@@ -513,15 +438,82 @@ var scrollVis = function () {
      * shows: filler count title
      *
      */
-    function showFavShow() {
+    function showGroup1() {
 
 	
+	g.selectAll('.text_cluster')
+	    .transition()
+	    .duration(1000)
+	    .text(function (d, i, att_data) {
+		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
+		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		//if (d.cluster_id == 0 ){
+		console.log(att_data[0].__data__);
+		//for(j=0;j<3;j++) {
+		//console.log(j, cols[j]);
+		//att_data.push(d.attributes[cols[j]]);
+		return pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
+		//    }
+		//}
+		//return att_data;
+	    })
+	    .attr('opacity', 1);
 	
 	g.selectAll('.bar_tsne')	
 	    .transition()
 	    .duration(500)
 	    .attr('opacity', function(d) {
 		if (d.cluster == 0){
+		    return 0.8;
+		}else{
+		    return 0.05;
+		}
+	    })
+	    .attr("cx", function(d) { return xChart_tsne(d.x*0.6+20); })
+	    .attr("cy", function(d) { return yChart_tsne(d.y*0.6-40); });
+
+	   
+	g.selectAll('.legend')
+	    .transition()
+	    .duration(1000)
+	    .style("opacity", function(d){
+	    	console.log('hi');
+	    	return  d == 0 ? 1 : 0;
+	    })
+	    //.selectAll('rect')
+	    .attr("x", 100)
+	    .attr("y", 10)
+	    .attr("height", height);
+    }
+
+
+
+    function showGroup2() {
+	
+	
+	g.selectAll('.text_cluster')
+	    .transition()
+	    .duration(1000)
+	    .text(function (d, i, att_data) {
+		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
+		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		//if (d.cluster_id == 0 ){
+		console.log(att_data[1].__data__);
+		//for(j=0;j<3;j++) {
+		//console.log(j, cols[j]);
+		//att_data.push(d.attributes[cols[j]]);
+		return pre[i] + att_data[1].__data__.attributes[cols[i]].toFixed(2);
+		//    }
+		//}
+		//return att_data;
+	    })
+	    .attr('opacity', 1);
+	
+	g.selectAll('.bar_tsne')	
+	    .transition()
+	    .duration(500)
+	    .attr('opacity', function(d) {
+		if (d.cluster == 1){
 		    return 0.8;
 		}else{
 		    return 0.05;
@@ -537,25 +529,73 @@ var scrollVis = function () {
 	
 	g.selectAll('.legend')
 	    .transition()
-	    .duration(1000)
+	    .duration(200)
 	    .style("opacity", function(d){
 	    	console.log('hi');
-	    	return  d == 0 ? 1 : 0;
+	    	return  d == 1 ? 1 : 0;
 	    })
 	    //.selectAll('rect')
 	    .attr("x", 100)
 	    .attr("y", 10)
 	    .attr("height", height);
 	
+    }
+
+
+    function showGroup3() {
+	    
 	
-	g.selectAll('.bar_logreg')
+	g.selectAll('.text_cluster')
 	    .transition()
-	    .duration(0)
-	    .attr('opacity', 0.0);
+	    .duration(1000)
+	    .text(function (d, i, att_data) {
+		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
+		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		//if (d.cluster_id == 0 ){
+		console.log(att_data[2].__data__);
+		//for(j=0;j<3;j++) {
+		//console.log(j, cols[j]);
+		//att_data.push(d.attributes[cols[j]]);
+		return pre[i] + att_data[2].__data__.attributes[cols[i]].toFixed(2);
+		//    }
+		//}
+		//return att_data;
+	    })
+	    .attr('opacity', 1);
+	
+	g.selectAll('.bar_tsne')	
+	    .transition()
+	    .duration(500)
+	    .attr('opacity', function(d) {
+		if (d.cluster == 2){
+		    return 0.8;
+		}else{
+		    return 0.05;
+		}
+	    })
+	    .attr("cx", function(d) { return xChart_tsne(d.x*0.6+20); })
+	    .attr("cy", function(d) { return yChart_tsne(d.y*0.6-40); });
 
+	    
 
+	//showAxis(xAxis_logreg, yAxis_logreg);
+
+	
+	g.selectAll('.legend')
+	    .transition()
+	    .duration(200)
+	    .style("opacity", function(d){
+	    	return  d == 2 ? 1 : 0;
+	    })
+	    //.selectAll('rect')
+	    .attr("x", 100)
+	    .attr("y", 10)
+	    .attr("height", height);
 	
     }
+
+
+    
     /**
      * showGrid - square grid
      *
@@ -1056,9 +1096,13 @@ var scrollVis = function () {
  *
  * @param data - loaded tsv data
  */
-function display(data) {
+function display(tsneData, clusterData) {
     // create a new plot and
     // display it
+    var data = {};
+    console.log(clusterData);
+    data['tsne'] = tsneData;
+    data['cluster'] = clusterData;
     console.log(data);
     var plot = scrollVis();
     d3.select('#vis')
@@ -1088,7 +1132,38 @@ function display(data) {
 }
 
 
-d3.json('./data/tsne.json', function(rawData) {display(rawData);} );
+
+var clusterData = [ {'cluster_id': 0,
+     'attributes': {'num_visitors': 0.6294361131845015,
+		    'n_sessions': 3.8663216903837863,
+		    'visit_length': 834.9392661540938,
+		    'most_rep_links': [{"https:\/\/www.bet.com\/video\/betexclusive\/2018\/marvel-black-panther-animated\/episode-104-filthy-pigs.html":0.0946663902,"https:\/\/www.bet.com\/shows\/hip-hop-awards\/2018\/photos\/exclusives\/wtf-is-going-down-the-instabooth.html":0.094256117,"https:\/\/www.bet.com\/video\/tales\/season-1\/exclusives\/irv-gotti-lorenzo-on-controversy-behind-ep-1-of-tales.html":0.0933118492,"https:\/\/www.bet.com\/video\/face-value\/season-1\/full-episodes\/episode-101-brandon-t-jackson-vs-sheryl-underwood.html":0.0932844658,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/exclusives\/instabooth-full-hha18.html":0.0476364381,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/exclusives\/45-years-of-hip-hop-hha18.html":0.0449241342,"https:\/\/www.bet.com\/shows.html":0.0436731365,"https:\/\/www.bet.com\/":0.0172852272,"https:\/\/www.bet.com\/shows\/hip-hop-awards.html":0.011031502,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/performances\/cardi-b-performs-get-up-10-and-backin-it-up-hha18.html":0.0101094043,"https:\/\/www.bet.com\/live-tv.html":0.0097075797,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/acceptance-speeches\/i-am-hip-hop-award-hha18.html":0.0096182634,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/performances\/lil-duval-ball-greezy-and-shiggy-are-living-their-best-life-hha18.html":0.0089481369,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/cyphers\/vic-mensa-g-herbo-taylor-benett-and-nick-grant-drop-heat-hha18.html":0.0088736507,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/cyphers\/big-pale-armani-white-and-wynne-digital-cypher-clean-hha18.html":0.0086501587,"*":0.0080837553,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/performances\/ti-performs-wraith-with-yo-gotti-and-jefe-hha18.html":0.0071440108,"https:\/\/www.bet.com\/shows\/hip-hop-awards\/performers.html":0.0070395402,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/cyphers\/casanova-phora-shawn-smith-and-more-put-on-for-their-cities-hha18.html":0.0066663418,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/performances\/flipp-dinero-had-the-crowd-bumpin-hha18.html":0.0066663418}]
+		   }
+    },
+    {'cluster_id' : 1,
+     'attributes': {'num_visitors': 0.1686910497387528,
+		    'n_sessions': 27.717216411906676,
+		    'visit_length': 612.3116287686154,
+		    'most_rep_links': [{"https:\/\/www.bet.com\/video\/betexclusive\/2018\/marvel-black-panther-animated\/episode-104-filthy-pigs.html":0.1055257697,"https:\/\/www.bet.com\/shows\/hip-hop-awards\/2018\/photos\/exclusives\/wtf-is-going-down-the-instabooth.html":0.1055257697,"https:\/\/www.bet.com\/video\/face-value\/season-1\/full-episodes\/episode-101-brandon-t-jackson-vs-sheryl-underwood.html":0.1055257697,"https:\/\/www.bet.com\/video\/tales\/season-1\/exclusives\/irv-gotti-lorenzo-on-controversy-behind-ep-1-of-tales.html":0.1055257697,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/exclusives\/instabooth-full-hha18.html":0.0987322386,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/exclusives\/45-years-of-hip-hop-hha18.html":0.0982198729,"https:\/\/www.bet.com\/shows.html":0.0968785969,"https:\/\/www.bet.com\/video\/hiphopawards\/2018\/cyphers\/big-pale-armani-white-and-wynne-digital-cypher-clean-hha18.html":0.0542571924,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/music\/042718-2018-bet-expierence-performance-lineup.html":0.0127483847,"https:\/\/www.bet.com\/shows\/bet-breaks\/episodes.html":0.0112873385,"https:\/\/www.bet.com\/video\/betexclusive\/2018\/marvel-black-panther-animated\/episode-101-black-panther-vs-captain-america.html":0.0086606872,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/lifestyle\/043018-unbanned-the-legend-of-aj1-premieres-at-tribeca.html":0.0077249961,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/celebrities\/043018-dave-chappelle-praises-mayweather-s-boxing-career.html":0.0076025439,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/music\/042718-cardi-b-cancels-summer-tour-dates.html":0.0073882019,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/celebrities\/042718-janelle-monae-comes-out-as-pansexual.html":0.0068673881,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/celebrities\/042718-the-obamas-train-200-african-leaders-in-government.html":0.0061621503,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/celebrities\/042418-steph-curry-inks-multi-year-production-deal-with-sony.html":0.0059780602,"https:\/\/www.bet.com\/video\/bet-breaks\/2018\/celebrities\/042718-avengers-expected-to-shatter-box-office-records.html":0.005609737,"https:\/\/www.bet.com\/video\/face-value\/season-1\/full-episodes\/episode-102-loni-love-vs-letoya-luckett.html":0.004349859,"https:\/\/www.bet.com\/video\/tales\/season-1\/promo\/a-peek-inside-the-making-of-episode-1-of-tales.html":0.003056935}]
+		   }
+    },
+    
+    {'cluster_id' : 2,
+     'attributes': {'num_visitors': 0.2018728370767456,
+		    'n_sessions': 9.83126050420168,
+		    'visit_length': 1635.1942643335224,
+		    'most_rep_links': [{"*":0.0183983232,"https:\/\/www.bet.com\/news\/sports\/2018\/10\/15\/wife-of-ex-falcons-player-catches-him-standing-with-erection-ove.html":0.0171226773,"https:\/\/www.bet.com\/celebrities\/news\/2018\/10\/20\/ti-and-tiny-talk-about-marriage.html":0.013947767,"https:\/\/www.bet.com\/celebrities\/news\/2018\/10\/16\/jeannie-mai-tears-admitting-wishes-never-married-husband.html":0.0128587331,"https:\/\/www.bet.com\/style\/style-and-beauty\/photos\/2015\/03\/baewatch-celebrities-slaying-in-swimsuits.html":0.0118754488,"https:\/\/www.bet.com\/music\/2018\/10\/15\/snoop-dogg-kim-kardashian-kiki-drake-kanye-west.html":0.0115332101,"https:\/\/www.bet.com\/style\/relationships\/photos\/2015\/03\/celebrity-couplecam.html":0.011212255,"https:\/\/www.bet.com\/celebrities\/news\/2018\/10\/19\/tamar-braxton.html":0.010634276,"https:\/\/www.bet.com\/celebrities\/news\/2018\/10\/24\/kim-kardashian-freaking-out-blac-chyna-reality-show.html":0.010441542,"https:\/\/www.bet.com\/news\/national\/2018\/10\/18\/disturbing-video-shows-mother-dunking-infants-head-underwater-to.html":0.0103344516,"https:\/\/www.bet.com\/style\/fashion\/2018\/03\/14\/see-all-the-times-ej-johnson-showed-off-his-lady-parts.html":0.0102701918,"https:\/\/www.bet.com\/celebrities\/news\/2018\/10\/18\/steve-harvey-is--sick--over-these-rumors-about-him-and-a-member-.html":0.0102059279,"https:\/\/www.bet.com\/music\/2018\/10\/24\/rihanna-watch-gloves-cardi-b-ghetto.html":0.0098416877,"https:\/\/www.bet.com\/":0.0097559648,"https:\/\/www.bet.com\/music\/2018\/10\/22\/50-cent-ashanti-cancelled-concert.html":0.0089841283,"https:\/\/www.bet.com\/music\/2018\/10\/22\/cassie-message-instagram.html":0.0088768816,"https:\/\/www.bet.com\/style\/health-and-wellness\/photos\/2015\/08\/oh-baby-when-stars-celebrate-their-bumps.html":0.008705263,"https:\/\/www.bet.com\/news\/national\/2018\/10\/15\/white-realtor-fired-after-video-shows-her-blocking-a-black-man-f.html":0.008168765,"https:\/\/www.bet.com\/music\/2018\/10\/22\/rihanna-drake-family-comment-response.html":0.0080828987,"https:\/\/www.bet.com\/music\/2018\/10\/20\/ashanti-show.html":0.0079540852}]
+		   }
+    }
+];
+
+
+//d3.json('./data/clusterAtt.json', function(clusterData) {
+d3.json('./data/tsne.json', function(tsneData) {
+    display(tsneData, clusterData);
+});
+//});
+  
 
 //display(bothData);
 
