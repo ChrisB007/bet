@@ -6,11 +6,51 @@
  * http://bost.ocks.org/mike/chart/
  */
 var scrollVis = function () {
+
+
+
+
+
+
+
+function wrap(text, width) {
+	text.each(function() {
+	    var text = d3.select(this),
+		words = text.text().split(/\s+/).reverse(),
+		word,
+		line = [],
+		lineNumber = 0,
+		lineHeight = 1.1, // ems
+		y = text.attr("y"),
+		dy = parseFloat(text.attr("dy")),
+		tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
+	    while (word = words.pop()) {
+		console.log(word);
+		line.push(word)
+		tspan.text(line.join(" "))
+		if (tspan.node().getComputedTextLength() > width) {
+		    line.pop()
+		    tspan.text(line.join(" "))
+		    line = [word]
+		    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
+		}
+	    }
+	})
+	    }
+    
+
+
+
+
+
+
+
+    
     // constants to define the size
     // and margins of the vis area.
     var width = 400;
-    var height = 300;
-    var margin = { top: 0, left: 100, bottom: 100, right: 0 };
+    var height = 400;
+    var margin = { top: 0, left: 300, bottom: 100, right: 0 };
 
 
 
@@ -137,7 +177,7 @@ var scrollVis = function () {
 	    //var seg_rank_data = get_seg_rank(rawData);
 	    var seg_rank_data = rawData;
 	    var countMax_fav = d3.max(seg_rank_data, function (d) { return d.count;});
-	    console.log(d3.sum(seg_rank_data, function(d) {return d.count;}));
+	    //console.log(d3.sum(seg_rank_data, function(d) {return d.count;}));
 	    //seg_rank_data = seg_rank_data.sort(function(a, b) {
 		//return d3.descending(a.value, b.value);
 	//});
@@ -170,9 +210,9 @@ var scrollVis = function () {
 	    }));
 
 	   
- 	xChart_seg_rank.domain( [d3.min(seg_rank_data, function(d){ return + d.rank; })-0.1, d3.max(seg_rank_data, function(d){ return + d.rank; })+0.1] );
+ 	xChart_seg_rank.domain( [d3.min(seg_rank_data, function(d){ return + d.rank; })-0.1, d3.max(seg_rank_data, function(d){ return + d.rank; })+0.05] );
 
-	xChart_seg_count.domain( [0, d3.max(seg_rank_data, function(d){ return + d.count; })+0.1] );
+	xChart_seg_count.domain( [0, d3.max(seg_rank_data, function(d){ return + d.count/3; })+0.02] );
 	    
 	xAxis_seg_rank.scale(xChart_seg_rank);
 	xAxis_seg_count.scale(xChart_seg_count);
@@ -186,7 +226,7 @@ var scrollVis = function () {
 	    .style('text-anchor','end')
 	    .attr("dx", "-1em")
 	    .attr("dy", "-0.5em")
-	    //.call(wrap, 0.5)
+
 	    //.attr('transform', function(d){
 	    //	return "rotate(-90)";
 	    //})
@@ -198,8 +238,11 @@ var scrollVis = function () {
 
 	g.append("g")
 	    .attr("class", "y axis")
-	    .call(yAxis_seg_rank);
-	g.select('.y.axis').style('opacity', 1.0);
+	    .call(yAxis_seg_rank)
+	    .attr('dx', '10em')
+	    .attr('dy', '0em')
+	    .style('opacity', 1);
+	
 	
 
 	
@@ -238,7 +281,7 @@ var scrollVis = function () {
 	    .append("circle")
 	    .attr("class", "bar_seg_rank")
 	    .attr('r', function(d){
-		return d.count*30;
+		return Math.sqrt(d.count/3)*20;
 	    })
 	    .attr("cx", function(d) {
 		return xChart_seg_rank(d.rank);	
@@ -261,14 +304,14 @@ var scrollVis = function () {
 	    .style("opacity","1");
 	
 	legend.append("rect")
-	    .attr("x", width+70)
+	    .attr("x", width+280)
 	    .attr("y", height-140)
 	    .attr("width", 12)
 	    .attr("height", 12)
 	    .style("fill", function(d) { return color(d); });
 	
 	legend.append("text")
-	    .attr("x", width+60)
+	    .attr("x", width+270)
 	    .attr("y", height-140+5)
 	    .attr("dy", ".35em")
 	    .style("text-anchor", "end")
@@ -316,13 +359,10 @@ var scrollVis = function () {
 		    };
 		});
 	});
-	    
-	
-	//legend.transition().duration(200).delay(function(d,i){ return 100 + 100 * i; }).style("opacity","1");
-	
 
+	
     }
-    /**
+	/**
      * setupSections - each section is activated
      * by a separate function. Here we associate
      * these functions to the sections based on
@@ -395,7 +435,7 @@ var scrollVis = function () {
 	    .transition()
 	    .duration(1000)
 	    .attr('r', function(d){
-		return d.count*30;
+		return Math.sqrt(d.count/3)*30;
 	    })
 	    .attr("cx", function(d) {
 		return xChart_seg_rank(d.rank);	
@@ -422,7 +462,7 @@ var scrollVis = function () {
 		return (3-d.rank)*5;
 	    })
 	    .attr("cx", function(d) {
-		return xChart_seg_count(d.count);	
+		return xChart_seg_count(d.count/3);	
 	    })
 	    .attr("cy", function (d, i) {
 		return yChart_seg_rank(d.label);
@@ -462,9 +502,12 @@ var scrollVis = function () {
 	
 
 	g.select('.y.axis')
-	    .call(yaxis);
+	    .call(yaxis)
+	    .selectAll('.tick text')
+//	    .call(wrap, 100000)
+	    .style('opacity', 1.0);
 //	    .transition().duration(400)
-//	    .style('opacity', 1.0);
+//	
 
 	
 //	g.select('.x.axis')
@@ -664,6 +707,12 @@ var scrollVis = function () {
   };
 
 
+
+    
+
+
+    
+
   // return chart function
   return chart;
 };
@@ -705,6 +754,9 @@ function display(data) {
     scroll.on('progress', function (index, progress) {
 	plot.update(index, progress);
     });
+
+    
+    
 }
 
 

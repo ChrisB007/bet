@@ -329,7 +329,7 @@ var scrollVis = function () {
 		//return att_data;
 	    })
 	    .attr("font-family", "sans-serif")
-	    .attr("font-size", "24px")
+	    .attr("font-size", "20px")
 	    .attr("fill", "black")
 	    .attr('opacity', 0.0);
 	
