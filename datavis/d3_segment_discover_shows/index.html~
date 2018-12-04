@@ -10,23 +10,13 @@
   <div id='graphic'>
     <div id='sections'>
       <section class="step">
-        <div class="title">What do BET fans most want before watching a new show?</div>
+        <div class="title">How do BET fans find new shows</div>
         New shows blurb
       </section>
       <section class="step">
-        <div class="title">and they are more likely to have found out about a new show via</div>
+        <div class="title">But, they find out about their favorite shows</div>
 	this way...
       </section>
-      <section class="step">
-        <div class="title">and they are more likely to have found out about a new show via</div>
-	this way...
-      </section>
-      <section class="step">
-        <div class="title">and they are more likely to have found out about a new show via</div>
-	this way...
-      </section>
-
-	    
       <!--
       <section class="step">
         <div class="title">My Talk</div>

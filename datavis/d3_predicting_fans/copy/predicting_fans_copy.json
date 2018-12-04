@@ -1,0 +1,14 @@
+[{'title':'WE CAN PREDICT WHICH VIEWERS WILL JOIN OUR RANKS—AND TARGET THEM ACCORDINGLY.',
+  'header_text': 'Sure, most people don’t like to be described as “predictable,” but there are no pure unicorns when analyzing trends in human behavior. Our potential BET fans—people who are familiar with BET, but don’t describe themselves as avid viewers of our programming (yet!)—clearly share similar behaviors, attitudes, and preferences. These respondents are already within reach; all they need is that extra pull to get them into our audience. Take a look, and find ways to meet our potential fans where they are, sooner.',
+  'recommendation_1': {'headline': 'Deploy hyper-targeted messaging.', 'blurb': 'Start by identifying key shared traits among potential fans, from favorite streaming services to commonly read publications. '},
+  'recommendation_2': {'headline': 'Create snackable content.', 'blurb': 'Give potential fans more reason to engage with our programming by prioritizing content that’s quickly and easily shared across channels.'},
+  'section_1': {'headline': 'We start with a broad look at every single survey respondent—each one represented by a single black dot.', 'blurb': 'Using analytics, we cluster the respondents based on all of their responses. The distance between each dot indicates the relationship between each respondent; the closer the dots, the more similar they are in behavior.'},
+  'section_2': {'headline': 'Birds of a feather, dots of a color. Purple dots are people who regularly watch at least 2 BET shows. These people are our most committed fans.', 'blurb': ''},
+  'section_3': {'headline': 'The blue dots represent those who regularly watch at least 1 BET show - these two groups represent our fans.', 'blurb': 'From this, we can clearly see that BET fans  tend to congregate on one side of our chart, indicating a clearly distinct set of attitudes and preferences.'},
+  'section_4': {'headline': 'When we layer in all potential BET fans, with varying levels of familiarity with our programming, the separation becomes more distinct.', 'blurb': '{This means we can explore exactly what behavioral factors differentiate a likely fan from a non-fan—and build a model to predict who’s most likely to join our ranks. 
+
+Next up, we explore the exact factors that differentiate likely BET fans from the others.}'},
+  'section_5': {'headline': 'When isolating for behaviors that we can directly impact, we see potential BET fans value content that can be easily shared or posted to their own social media accounts. They’re less likely to binge-watch or prioritize a great storyline.', 'blurb': ''},
+  'section_6': {'headline': '', 'blurb': 'Potential BET fans prioritize snackable, shareable content, and move fluidly between multiple streaming services.'},
+  'section_7': {'headline': '', 'blurb': 'Non-fans prioritize high-quality, binge-worthy content that helps them find escape.'}
+ }]
