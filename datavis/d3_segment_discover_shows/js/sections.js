@@ -372,8 +372,8 @@ function wrap(text, width) {
     var setupSections = function () {
 	// activateFunctions are called each
 	// time the active section changes
-	activateFunctions[0] = showSegRank;
-	activateFunctions[1] = showSegCount;
+	activateFunctions[0] = showSegCount;
+	activateFunctions[1] = showSegRank;
 	//activateFunctions[1] = showFavShow_bet;
 	//activateFunctions[2] = showDiscoverNewShow_all;
 	//activateFunctions[3] = showDiscoverNewShow_bet;

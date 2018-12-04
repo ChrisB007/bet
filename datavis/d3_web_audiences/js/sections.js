@@ -8,7 +8,7 @@
 var scrollVis = function () {
     // constants to define the size
     // and margins of the vis area.
-    var width = 500;
+    var width = 550;
     var height = 300;
     var margin = { top: 0, left: 100, bottom: 500, right: 0 };
     
@@ -310,26 +310,34 @@ var scrollVis = function () {
 	    .append("text")
 	    .attr('class', 'text_cluster')
 	    .attr("x", function(d, i) {
-		return xChart_tsne(-30);
+		return xChart_tsne(-40);
 	    })
 	    .attr("y", function(d, i) {
-		return yChart_tsne(50-i*15);
+		return yChart_tsne(70-i*12);
 	    })
 	    .text(function (d, i, att_data) {
+		
 		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
-		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		if (i==0){
+		    var onscreen = "make up " + att_data[0].__data__.attributes[cols[i]].toFixed(2)*100 + "/% of site visitors."
+		}else if (i==1){
+		    var onscreen = "They visit the site on average every " + 20/att_data[0].__data__.attributes[cols[i]].toFixed(2) + " days"
+		}else{
+		    var onscreen = "and they spend " + (att_data[0].__data__.attributes[cols[i]]/60).toFixed(0) + "minutes on the site"
+		}
+		var pre = ['make up ', 'Number of sessions: ', 'Length of visit: '];
 		//if (d.cluster_id == 0 ){
 		console.log(att_data[0].__data__);
 		//for(j=0;j<3;j++) {
 		//console.log(j, cols[j]);
 		//att_data.push(d.attributes[cols[j]]);
-		return pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
+		return onscreen;//pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
 		//    }
 		//}
 		//return att_data;
 	    })
 	    .attr("font-family", "sans-serif")
-	    .attr("font-size", "20px")
+	    .attr("font-size", "15px")
 	    .attr("fill", "black")
 	    .attr('opacity', 0.0);
 	
@@ -446,16 +454,21 @@ var scrollVis = function () {
 	    .duration(1000)
 	    .text(function (d, i, att_data) {
 		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
-		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		if (i==0){
+		    var onscreen = "The Cultural Ambassadors make up " + att_data[0].__data__.attributes[cols[i]].toFixed(2)*100 + "% of site visitors."
+		}else if (i==1){
+		    var onscreen = "They visit the site on average once every " + (20/att_data[0].__data__.attributes[cols[i]]).toFixed(0) + " days,"
+		}else{
+		    var onscreen = "and they spend, on average " + (att_data[0].__data__.attributes[cols[i]]/60).toFixed(0) + " minutes on the site."
+		}
+		var pre = ['make up ', 'Number of sessions: ', 'Length of visit: '];
 		//if (d.cluster_id == 0 ){
 		console.log(att_data[0].__data__);
 		//for(j=0;j<3;j++) {
 		//console.log(j, cols[j]);
 		//att_data.push(d.attributes[cols[j]]);
-		return pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
-		//    }
-		//}
-		//return att_data;
+		return onscreen;//pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
+
 	    })
 	    .attr('opacity', 1);
 	
@@ -496,16 +509,19 @@ var scrollVis = function () {
 	    .duration(1000)
 	    .text(function (d, i, att_data) {
 		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
-		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		if (i==0){
+		    var onscreen = "The Loyalists make up " + att_data[1].__data__.attributes[cols[i]].toFixed(2)*100 + "% of site visitors."
+		}else if (i==1){
+		    var onscreen = "They visit the site on average once every " + (20/att_data[1].__data__.attributes[cols[i]]).toFixed(0) + " days,"
+		}else{
+		    var onscreen = "and they spend, on average " + (att_data[1].__data__.attributes[cols[i]]/60).toFixed(0) + " minutes on the site."
+		}
+		var pre = ['make up ', 'Number of sessions: ', 'Length of visit: '];
 		//if (d.cluster_id == 0 ){
-		console.log(att_data[1].__data__);
 		//for(j=0;j<3;j++) {
 		//console.log(j, cols[j]);
 		//att_data.push(d.attributes[cols[j]]);
-		return pre[i] + att_data[1].__data__.attributes[cols[i]].toFixed(2);
-		//    }
-		//}
-		//return att_data;
+		return onscreen;//pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
 	    })
 	    .attr('opacity', 1);
 	
@@ -536,7 +552,7 @@ var scrollVis = function () {
 	    })
 	    //.selectAll('rect')
 	    .attr("x", 100)
-	    .attr("y", 10)
+	    .attr("y", -10)
 	    .attr("height", height);
 	
     }
@@ -550,16 +566,19 @@ var scrollVis = function () {
 	    .duration(1000)
 	    .text(function (d, i, att_data) {
 		var cols = ['num_visitors', 'n_sessions', 'visit_length'];
-		var pre = ['Visitor fraction: ', 'Number of sessions: ', 'Length of visit: '];
+		if (i==0){
+		    var onscreen = "The Curious Observers make up " + att_data[2].__data__.attributes[cols[i]].toFixed(2)*100 + "% of site visitors."
+		}else if (i==1){
+		    var onscreen = "They visit the site on average once every " + (20/att_data[2].__data__.attributes[cols[i]]).toFixed(0) + " days,"
+		}else{
+		    var onscreen = "and they spend, on average " + (att_data[2].__data__.attributes[cols[i]]/60).toFixed(0) + " minutes on the site."
+		}
+		var pre = ['make up ', 'Number of sessions: ', 'Length of visit: '];
 		//if (d.cluster_id == 0 ){
-		console.log(att_data[2].__data__);
 		//for(j=0;j<3;j++) {
 		//console.log(j, cols[j]);
 		//att_data.push(d.attributes[cols[j]]);
-		return pre[i] + att_data[2].__data__.attributes[cols[i]].toFixed(2);
-		//    }
-		//}
-		//return att_data;
+		return onscreen;//pre[i] + att_data[0].__data__.attributes[cols[i]].toFixed(2);
 	    })
 	    .attr('opacity', 1);
 	
@@ -589,7 +608,7 @@ var scrollVis = function () {
 	    })
 	    //.selectAll('rect')
 	    .attr("x", 100)
-	    .attr("y", 10)
+	    .attr("y", -30)
 	    .attr("height", height);
 	
     }
